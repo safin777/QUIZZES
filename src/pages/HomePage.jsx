@@ -1,8 +1,9 @@
 import Header from "../components/common/Header";
 
+
 const HomePage = () => {
   return (
-    <div>
+    <div className="container py-3 mx-auto">
       <Header/>
     </div>
   );
