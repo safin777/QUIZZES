@@ -1,0 +1,7 @@
+export const actions = {
+  quiz: {
+    QUIZ_DATA_FETCHING: "QUIZ_DATA_FETCHING",
+    QUIZ_DATA_FETCHED: "QUIZ_DATA_FETCHED",
+    QUIZ_DATA_ERROR: "QUIZ_DATA_ERROR",
+  },
+};

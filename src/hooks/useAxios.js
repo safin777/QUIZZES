@@ -1,7 +1,7 @@
 import { api } from "../apis/index";
 import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { axios } from "axios";
+import axios from "axios";
 
 const useAxios = () => {
   const { auth, setAuth } = useAuth();
