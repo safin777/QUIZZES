@@ -26,9 +26,10 @@ const LoginForm = () => {
     mutationFn: login,
     mutationKey: ['auth/login'],
     onSuccess: (response) => {
-      const data = response;
+      const data = response.data;
+      console.log(data);
       localStorage.setItem('auth', JSON.stringify({
-        user: data.user,
+        user: data?.user,
         accessToken: data?.tokens?.accessToken,
         refreshToken: data?.tokens?.refreshToken,
       })
