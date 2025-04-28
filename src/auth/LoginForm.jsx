@@ -1,8 +1,14 @@
-import Field from "../components/common/Field";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import axios from "axios";
+import InputField from "../components/common/InputField";
+import { useMutation } from "@tanstack/react-query";
+import { login } from '../apis/authentication';
+import cn from "../utils/cn";
+import PasswordInput from "../components/common/PasswordInput";
+import Alert from "../components/common/Alert";
+
+
 
 const LoginForm = () => {
   const { setAuth } = useAuth();
@@ -15,98 +21,85 @@ const LoginForm = () => {
     setError,
   } = useForm();
 
-  const submitForm = async (formData) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/api/auth/login`,
-        formData
+  //login query with tanstack query
+  const { isPending, mutate } = useMutation({
+    mutationFn: login,
+    mutationKey: ['auth/login'],
+    onSuccess: (response) => {
+      const data = response;
+      localStorage.setItem('auth', JSON.stringify({
+        user: data.user,
+        accessToken: data?.tokens?.accessToken,
+        refreshToken: data?.tokens?.refreshToken,
+      })
       );
-      if (response.status === 200) {
-        const { tokens, user } = response.data.data;
-        if (tokens) {
-          const authToken = tokens.accessToken;
-          const refreshToken = tokens.refreshToken;
-          setAuth({ user, authToken, refreshToken });
-          navigate("/");
-        }
+
+      setAuth({
+        user: data.user,
+        accessToken: data?.tokens?.accessToken,
+        refreshToken: data?.tokens?.refreshToken,
+      })
+
+      if (response && response?.data?.user?.role === 'admin') {
+        setTimeout(() => navigate("/admin/dashboard/quizzes", { replace: true }),
+          0);
+      } else {
+        navigate("/", { replace: true });
       }
-    } catch (error) {
-      console.log(error);
-      setError("root.random", {
-        type: "random",
-        message: `User with Email ${formData.email} is not found`,
+    },
+    onError: (error) => {
+      setError('root', {
+        type: 'loginError',
+        message: error?.message.includes('AxiosError:') ? error?.message.split(':')[1] : error.message,
       });
     }
+  });
+
+  const submitForm = (data) => {
+    mutate(data);
   };
+
 
   return (
     <>
       <form onSubmit={handleSubmit(submitForm)}>
-        <div className="mb-4">
-          <Field
-            label="Enter your username or email address"
-            htmlFor="email"
-            error={errors.email}
-            classNameFor="block mb-2"
-          >
-            <input
-              type="email"
-              id="email"
-              className={`w-full px-4 py-3 border  rounded-lg ${
-                errors.emmail ? "border-red-600" : "border-gray-300"
-              }`}
-              placeholder="Username or email address"
-              {...register("email", { required: "Email ID is required" })}
-            />
-          </Field>
-        </div>
+        <InputField htmlfor='email' label='Enter your email' error={errors?.email}>
+          <input
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address',
+              },
+            })}
+            type='email'
+            id='email'
+            name="email"
+            className={cn(`px-4 py-3 w-full rounded-lg border border-gray-300 dark:bg-dark-secondary dark:text-dark-textPrimary`,
+              errors?.email && 'border-red-500 focus:outline-red-500')}
+            placeholder="Enter your email or username"
+          />
+        </InputField>
 
-        <div className="mb-6">
-          <Field
-            label="Enter your Password"
-            htmlFor="password"
-            error={errors.password}
-            classNameFor="block mb-2"
-          >
-            <input
-              type="password"
-              id="password"
-              className={`w-full px-4 py-3 border  rounded-lg ${
-                errors.password ? "border-red-600" : "border-gray-300"
-              }`}
-              placeholder="Password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: {
-                  value: 8,
-                  message: "Your password must be at least 8 characters",
-                },
-              })}
-            />
-          </Field>
-        </div>
+        <InputField htmlfor='password' label='Enter your password' error={errors?.password} className='mb-6'>
+          <PasswordInput
+            name='password'
+            id='password'
+            register={register}
+            errors={errors}
+            validations={{
+              required: "Password is required*",
+            }}
+          />
+        </InputField>
 
-        <p>{errors?.root?.random?.message}</p>
+        {errors?.root && <Alert text={errors?.root?.message} />}
 
-        <div className="gap-2 mb-6 ">
-          <Field
-            htmlFor="admin"
-            error="error"
-            label="Login as Admin"
-            classNameFor="block"
-          >
-            <input
-              type="checkbox"
-              id="admin"
-              className="px-4 py-3 border border-gray-300 rounded-lg"
-            />
-          </Field>
-        </div>
         <button
-          type="submit"
-          className="w-full py-3 mb-4 text-white rounded-lg bg-primary"
-        >
-          Sign in
+          type='submit'
+          disabled={isPending}
+          className='py-3 mb-4 w-full text-white rounded-lg bg-primary'>
+          {isPending ? "Signing in..." : "Sign In"}
         </button>
       </form>
     </>

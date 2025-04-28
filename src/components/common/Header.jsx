@@ -1,5 +1,5 @@
 import Logo from "../../assets/logo.svg";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logout from "../../auth/Logout";
 
 const Header = () => {
@@ -8,21 +8,23 @@ const Header = () => {
     navigate("/login");
   };
   return (
-    
-      <header className="flex items-center justify-between mb-12">
+    <header className="flex items-center justify-between mb-12">
+      <Link to="/">
         <img src={Logo} className="h-7" />
-        <div>
-          <button
-            onClick={handleLogin}
-            className="px-4 py-2 transition-colors rounded hover:bg-primary hover:text-white fontJero"
-          >
-            Login
-          </button>
+      </Link>
 
-          <Logout/>
-        </div>
-      </header>
-    
+      <div>
+        <button
+          onClick={handleLogin}
+          className="px-4 py-2 transition-colors rounded hover:bg-primary hover:text-white fontJero"
+        >
+          Login
+        </button>
+
+        <Logout />
+        <Link to="/quiz">Quiz</Link>
+      </div>
+    </header>
   );
 };
 

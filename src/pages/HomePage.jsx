@@ -1,54 +1,42 @@
-import Profile from "../profile/Profile";
-import QuizList from "../quizes/QuizList";
-
-import { useEffect } from "react";
-import { useAxios } from "../hooks/useAxios";
-import { actions } from "../actions/index";
-import { useQuiz } from "../hooks/useQuiz";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../hooks/useAuth";
-
+import useUsersApiHandlers from "../hooks/useUsersApiHandlers";
+import PageTitle from "../components/common/PageTitle";
+import Profile from "../profile/Profile";
+import QuizCardSkeleton from "../components/skeletons/QuizCardSkeleton";
+import ErrorComponent from "../components/common/ErrorComponent";
+import QuizListSection from "../components/userPanel/QuizListSection";
+import UserQuizCard from "../components/userPanel/UserQuizCard";
 const HomePage = () => {
-  const { state, dispatch } = useQuiz();
-  const { api } = useAxios();
   const { auth } = useAuth();
-  useEffect(() => {
-    dispatch({ type: actions.quiz.QUIZ_DATA_FETCHING });
-    const fetchQuizes = async () => {
-      try {
-        console.log("fecthing..");
-        const response = await api.get(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/api/quizzes`
-        );
+  const { getQuizsetList } = useUsersApiHandlers();
 
-        if (response.status === 200) {
-          dispatch({
-            type: actions.quiz.QUIZ_DATA_FETCHED,
-            data: response.data,
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const { isLoading, data, error } = useQuery({
+    queryKey: ["quizzes"],
+    queryFn: getQuizsetList,
+  });
 
-    fetchQuizes();
-  }, []);
-
-  if (state?.loading) {
-    return <div> We are working...</div>;
-  }
-
-  if (state?.error) {
-    return <div> Error in fatching Quizes {state?.error?.message}</div>;
-  }
+  const quizList = data?.data;
 
   return (
     <>
-      {auth?.user ? <Profile /> : ""}
-      <main className="h-full p-6 bg-white rounded-md">
+      <PageTitle title='Quizzes - Home' />
+      {auth?.user && <Profile />}
+
+      <main className='p-6 h-full bg-white rounded-md dark:bg-dark-secondary'>
         <section>
-          <h3 className="mb-6 text-2xl font-bold">Participate In Quizees</h3>
-          <QuizList quizes={state?.quizes.data}/>
+          <h3 className='mb-6 text-2xl font-bold dark:text-dark-textSecondary'>
+            Participate In Quizees
+          </h3>
+
+          {isLoading ? (<QuizCardSkeleton />) : error ? (<ErrorComponent />) : (
+            <QuizListSection>
+              {quizList && quizList.length > 0 && quizList.map((quizSet) => (
+                <UserQuizCard key={quizSet?.id} quizSet={quizSet} />
+              ))}
+            </QuizListSection>
+          )}
+
         </section>
       </main>
     </>
