@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import useUsersApiHandlers from "../../hooks/useUsersApiHandlers";
 import useResult from "../../hooks/useResult";
+import { getImgURL } from "../../utils";
 
 
 const bgImage = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -18,14 +19,14 @@ const UserQuizCard = ({ quizSet }) => {
     const { getAttempts } = useUsersApiHandlers();
     // query to get attempts result
     const { data } = useQuery({
-        queryKey: ["quizzes",quizSet.id,"attempts"],
+        queryKey: ["quizzes", quizSet.id, "attempts"],
         queryFn: getAttempts,
         enabled: !!auth?.user,
     })
 
     //check that user already attemted this quiz or not
     const allAttempts = data?.data?.attempts;
-    const isAttempted = allAttempts?.some(attempted => attempted?.user.id === auth?.user?.id);
+    const isAttempted = allAttempts?.find(attempted => attempted?.user?.id === auth?.user?.id);
 
     //get users result on this quiz
     const { totalCorrectMarks } = useResult(data?.data);
@@ -124,6 +125,11 @@ const UserQuizCard = ({ quizSet }) => {
                     </div>
                 </Link>
             )}
+            <img
+                src={getImgURL(`${image}.jpg`)}
+                alt='JavaScript Hoisting'
+                className='object-cover mb-4 w-full h-full rounded'
+            />
         </div>
     )
 

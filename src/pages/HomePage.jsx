@@ -17,6 +17,7 @@ const HomePage = () => {
   });
 
   const quizList = data?.data;
+  console.log(quizList);
 
   return (
     <>
