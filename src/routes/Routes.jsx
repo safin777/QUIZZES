@@ -11,6 +11,8 @@ import HomePage from "../pages/HomePage";
 import PrivateRoutes from "./PrivateRoutes";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import QuizPage from "../pages/user/QuizPage";
+import ResultPage from "../pages/user/ResultPage";
 
 
 
@@ -21,18 +23,20 @@ const router = createBrowserRouter(
                 <Route path='*' element={<NotFoundPage />} />
                 <Route path='/' element={<HomePage />} />
                 {/* Private routes for users */}
-                <Route element={<PrivateRoutes/>}>
-
+                <Route element={<PrivateRoutes />}>
+                    <Route path='/quizzes/:quizsetId' element={<QuizPage />} />
                 </Route>
-
-                {/*these are appliction auth routes for login and registration. these are not protected */}
-
             </Route>
 
-            {/*these are appliction auth routes for login and registration. these are not protected */}
+            <Route element={<PrivateRoutes />}>
+                <Route path='/result/:quizsetId' element={<ResultPage />} />
+            </Route>
 
-            <Route path="/login" errorElement={<ErrorPage/>} element={<LoginPage/>}></Route>
-            <Route path='/register' errorElement={<ErrorPage/>} element={<RegisterPage/>}></Route>
+
+
+            {/*these are appliction auth routes for login and registration. these are not protected */}
+            <Route path="/login" errorElement={<ErrorPage />} element={<LoginPage />}></Route>
+            <Route path='/register' errorElement={<ErrorPage />} element={<RegisterPage />}></Route>
         </>
     )
 );

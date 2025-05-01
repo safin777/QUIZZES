@@ -42,9 +42,50 @@ const useUsersApiHandlers = () => {
         }
     }
 
+    // get quizset by Id
+    const getQuizById = async ({ queryKey }) => {
+        try {
+            const response = await api.get(`${server_base_url}/quizzes/${queryKey[1]}`, {
+                headers: {
+                    Authorization: `Bearer ${auth?.accessToken}`,
+                },
+            });
+
+            if (response.status === 200) {
+                return response.data;
+            }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    const submitQuizAnswer = async (answers, quizId) => {
+        try {
+            const response = await api.post(
+                `${server_base_url}/quizzes/${quizId}/attempt`,
+                { answers },
+                {
+                    headers: {
+                        Authorization: `Bearer ${auth.accessToken}`,
+                    },
+                }
+            );
+            if (response.status === 200) {
+                return response.data;
+            } else {
+                throw new Error("There was an error while submitting the quiz");
+            }
+
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
+
     return {
         getQuizsetList,
         getAttempts,
+        getQuizById,
+        submitQuizAnswer
     }
 }
 
