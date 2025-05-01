@@ -61,6 +61,8 @@ const useUsersApiHandlers = () => {
 
     const submitQuizAnswer = async (answers, quizId) => {
         try {
+            const quizId = answers.quizId;
+            const answers = answers.answers;
             const response = await api.post(
                 `${server_base_url}/quizzes/${quizId}/attempt`,
                 { answers },

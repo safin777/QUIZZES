@@ -3,12 +3,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { easeOut } from "motion";
-import useUsersApiHandlers  from "../../hooks/useUsersApiHandlers";
+import useUsersApiHandlers from "../../hooks/useUsersApiHandlers";
 import useResult from "../../hooks/useResult";
 import PageTitle from "../../components/common/PageTitle";
 import ErrorComponent from "../../components/common/ErrorComponent";
 import ResultPageSkeliton from "../../components/skeletons/ResultPageSkeliton";
 import whiteLogoImage from "../../assets/logo-white.svg";
+import ResultSummery from "../../components/userPanel/ResultSummery";
+import ResultDetails from "../../components/userPanel/ResultDetails";
+import QuizWithAnswer from "../../components/common/QuizWithAnswer";
 
 
 const ResultPage = () => {
@@ -73,6 +76,29 @@ const ResultPage = () => {
                                 isInPerviewMode={isInPerviewMode}
                                 data={data?.data}
                             />
+                            <ResultDetails>
+                                {questionGetTimeError ? (
+                                    <div className='flex justify-center items-center p-3 bg-gray-200'>
+                                        <ErrorComponent />
+                                    </div>
+                                ) : (
+                                    questionsList &&
+                                    questionsList.map((ques, index) => {
+                                        return (
+                                            <QuizWithAnswer
+                                                index={index}
+                                                mySubmittedAnswers={
+                                                    mySubmittedAnswers
+                                                }
+                                                key={ques.id}
+                                                ques={ques}
+                                                adminsAnswer={adminsAnswer}
+                                                isInPerviewMode={isInPerviewMode}
+                                            />
+                                        );
+                                    })
+                                )}
+                            </ResultDetails>
                         </div>
                     </div>
                 )}
