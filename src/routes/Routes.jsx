@@ -13,6 +13,9 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import QuizPage from "../pages/user/QuizPage";
 import ResultPage from "../pages/user/ResultPage";
+import AdminPageLayout from "../pages/layouts/AdminPageLayout";
+import DashboardPage from "../pages/admin/DashboardPage";
+import QuizSetAddPage from "../pages/admin/QuizSetAddPage";
 
 
 
@@ -37,6 +40,31 @@ const router = createBrowserRouter(
             {/*these are appliction auth routes for login and registration. these are not protected */}
             <Route path="/login" errorElement={<ErrorPage />} element={<LoginPage />}></Route>
             <Route path='/register' errorElement={<ErrorPage />} element={<RegisterPage />}></Route>
+
+            {/* role based routing : Admin */}
+            {/*below routes use a layout for admin's pages */}
+
+            <Route errorElement={<ErrorPage />}
+                path="/admin"
+                element={<AdminPageLayout />}
+            >
+                <Route path='*' element={<NotFoundPage />} />
+                <Route
+                    path='/admin/dashboard/quizzes'
+                    element={<DashboardPage />}
+                />
+                <Route
+                    path='/admin/dashboard/quizzes/add'
+                    element={<QuizSetAddPage />}
+                />
+
+                <Route
+                    path='/admin/dashboard/quizzes/:quizsetId'
+                    element={<QuizEntryPage />}
+                />
+
+
+            </Route>
         </>
     )
 );
