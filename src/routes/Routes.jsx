@@ -16,6 +16,7 @@ import ResultPage from "../pages/user/ResultPage";
 import AdminPageLayout from "../pages/layouts/AdminPageLayout";
 import DashboardPage from "../pages/admin/DashboardPage";
 import QuizSetAddPage from "../pages/admin/QuizSetAddPage";
+import QuizEntryPage from "../pages/admin/QuizEntryPage";
 
 
 
@@ -62,6 +63,8 @@ const router = createBrowserRouter(
                     path='/admin/dashboard/quizzes/:quizsetId'
                     element={<QuizEntryPage />}
                 />
+
+                
 
 
             </Route>

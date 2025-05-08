@@ -9,7 +9,7 @@ import Alert from "../../components/common/Alert";
 const QuizsetCreateForm = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const { createQuizset } = useAdminApiHandlers();
+    const { createQuizSet } = useAdminApiHandlers();
     const {
         register,
         handleSubmit,
@@ -18,7 +18,7 @@ const QuizsetCreateForm = () => {
     } = useForm();
 
     const { mutate } = useMutation({
-        mutationFn: createQuizset,
+        mutationFn: createQuizSet,
         onSuccess: (data) => {
             queryClient.invalidateQueries(["quizzes"]);
             navigate(`/admin/dashboard/quizzes/${data?.data?.id}`);
