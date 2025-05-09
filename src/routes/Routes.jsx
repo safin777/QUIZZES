@@ -17,6 +17,8 @@ import AdminPageLayout from "../pages/layouts/AdminPageLayout";
 import DashboardPage from "../pages/admin/DashboardPage";
 import QuizSetAddPage from "../pages/admin/QuizSetAddPage";
 import QuizEntryPage from "../pages/admin/QuizEntryPage";
+import NoContentPage from "../pages/admin/NoContentPage";
+import LeaderBoardPage from "../pages/user/LeaderBoardPage";
 
 
 
@@ -29,12 +31,16 @@ const router = createBrowserRouter(
                 {/* Private routes for users */}
                 <Route element={<PrivateRoutes />}>
                     <Route path='/quizzes/:quizsetId' element={<QuizPage />} />
+                    <Route
+                        path='/leaderboard/:quizsetId'
+                        element={<LeaderBoardPage />}
+                    />
                 </Route>
             </Route>
-
             <Route element={<PrivateRoutes />}>
                 <Route path='/result/:quizsetId' element={<ResultPage />} />
             </Route>
+
 
 
 
@@ -64,7 +70,18 @@ const router = createBrowserRouter(
                     element={<QuizEntryPage />}
                 />
 
-                
+                <Route
+                    path='/admin/dashboard/settings'
+                    element={<NoContentPage />}
+                />
+                <Route
+                    path='/admin/dashboard/manage-users'
+                    element={<NoContentPage />}
+                />
+                <Route
+                    path='/admin/dashboard/manage-roles'
+                    element={<NoContentPage />}
+                />
 
 
             </Route>

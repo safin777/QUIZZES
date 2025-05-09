@@ -61,8 +61,6 @@ const useUsersApiHandlers = () => {
 
     const submitQuizAnswer = async (answers, quizId) => {
         try {
-            const quizId = answers.quizId;
-            const answers = answers.answers;
             const response = await api.post(
                 `${server_base_url}/quizzes/${quizId}/attempt`,
                 { answers },
@@ -72,12 +70,13 @@ const useUsersApiHandlers = () => {
                     },
                 }
             );
+
             if (response.status === 200) {
+                console.log("Quiz submitted successfully", response.data);
                 return response.data;
             } else {
                 throw new Error("There was an error while submitting the quiz");
             }
-
         } catch (error) {
             throw new Error(error);
         }

@@ -27,17 +27,16 @@ const QuizWithAnswer = ({
     const myAnswer =
         mySubmittedAnswers &&
         mySubmittedAnswers?.find((ans) => ans?.question_id === ques?.id);
-    console.log(`ques`, ques);
 
     return (
-        <div className='rounded-lg border border-gray-200 dark:border-dark-textSecondary overflow-hidden dark:text-dark-textPrimary shadow-sm mb-4'>
+        <div className='overflow-hidden mb-4 rounded-lg border border-gray-200 shadow-sm dark:border-dark-textSecondary dark:text-dark-textPrimary'>
             <div className='bg-white dark:bg-dark-primary p-6 md:w-[450px]  lg:w-[600px] !pb-2'>
                 <div className='flex justify-between items-center mb-4'>
                     <h3 className='text-lg text-wrap lg:w-[400px] xl:w-[550px] font-semibold'>
                         {index + 1}. {ques?.question}
                     </h3>
                 </div>
-                <div className='space-y-2 mb-5'>
+                <div className='mb-5 space-y-2'>
                     {ques?.options &&
                         ques?.options?.map((option, index) => {
                             return (
@@ -76,7 +75,7 @@ const QuizWithAnswer = ({
                                             />
                                         )}
 
-                                        <div className='flex justify-between w-full pr-4'>
+                                        <div className='flex justify-between pr-4 w-full'>
                                             <span>{option}</span>
 
                                             {isInPerviewMode
@@ -127,7 +126,7 @@ const QuizWithAnswer = ({
                                     {isInPerviewMode
                                         ? option !== adminsAns?.answer &&
                                         option === ques.correctAnswer && (
-                                            <span className='text-xs '>
+                                            <span className='text-xs'>
                                                 <span className='text-[9px]'>
                                                     ❗
                                                 </span>{" "}
@@ -137,7 +136,7 @@ const QuizWithAnswer = ({
                                         )
                                         : option !== myAnswer?.answer &&
                                         option === ques.correctAnswer && (
-                                            <span className='text-xs '>
+                                            <span className='text-xs'>
                                                 <span className='text-[9px]'>
                                                     ❗
                                                 </span>{" "}
@@ -149,7 +148,7 @@ const QuizWithAnswer = ({
                                     {isInPerviewMode
                                         ? option === adminsAns?.answer &&
                                         option === ques.correctAnswer && (
-                                            <span className='text-xs '>
+                                            <span className='text-xs'>
                                                 <span className='text-[9px] text-green-600 '>
                                                     ✅
                                                 </span>{" "}
@@ -159,7 +158,7 @@ const QuizWithAnswer = ({
                                         )
                                         : option === myAnswer?.answer &&
                                         option === ques.correctAnswer && (
-                                            <span className='text-xs '>
+                                            <span className='text-xs'>
                                                 <span className='text-[9px] text-green-600 '>
                                                     ✅
                                                 </span>{" "}

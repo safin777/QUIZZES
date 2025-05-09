@@ -30,8 +30,6 @@ const UserQuizCard = ({ quizSet }) => {
 
     //get users result on this quiz
     const { totalCorrectMarks } = useResult(data?.data);
-
-
     return (
         <div className=' rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow max-h-[450px] relative group cursor-pointer '>
             <div className='absolute top-1/2 px-4 text-center text-white transition-all -translate-y-1/2'>

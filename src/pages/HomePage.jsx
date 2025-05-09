@@ -10,14 +10,13 @@ import UserQuizCard from "../components/userPanel/UserQuizCard";
 const HomePage = () => {
   const { auth } = useAuth();
   const { getQuizsetList } = useUsersApiHandlers();
-
   const { isLoading, data, error } = useQuery({
     queryKey: ["quizzes"],
     queryFn: getQuizsetList,
   });
 
   const quizList = data?.data;
-  console.log(quizList);
+  
 
   return (
     <>

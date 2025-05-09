@@ -38,7 +38,7 @@ const ResultPage = () => {
 
     const questionsList = quizzes?.data?.questions && quizzes?.data?.questions;
     const isIattempedted = quizzes?.data?.user_attempt?.attempted;
-    console.log(`isAttempted`, isIattempedted);
+    
 
 
     const { mySubmittedAnswers } = useResult(data?.data && data?.data);

@@ -8,8 +8,6 @@ const ResultSummery = ({ data, isInPerviewMode }) => {
     const { auth } = useAuth();
     const { myCorrectAnswers, myIncorrectAnswers, totalCorrectMarks } =
         useResult(data);
-
-
     return (
         <div className='max-h-screen flex-1 overflow-hidden lg:flex pt-[100px] lg:pt-0  bg-primary dark:bg-dark-primary  flex-col justify-center p-12 relative'>
             {auth?.user?.role === "admin" && (
@@ -65,7 +63,7 @@ const ResultSummery = ({ data, isInPerviewMode }) => {
                             </div>
                             <Link
                                 to={`/leaderboard/${data?.quiz?.id}`}
-                                className='py-3 text-lg font-medium text-white underline rounded-md transition-colors  bg-secondary hover:bg-secondary/90'>
+                                className='py-3 text-lg font-medium text-white underline rounded-md transition-colors bg-secondary hover:bg-secondary/90'>
                                 View Leaderboard
                             </Link>
                         </div>

@@ -13,11 +13,9 @@ import QuizArea from "../../components/userPanel/QuizArea";
 import Quiz from "../../components/userPanel/Quiz";
 
 const QuizPage = () => {
-
     const { auth } = useAuth();
     const { pathname } = useLocation();
     const navigate = useNavigate();
-
     const quizsetId = pathname.split("/")[2];
     const [answers, setAnswers] = useState({});
     const { getQuizById } = useUsersApiHandlers();

@@ -25,15 +25,15 @@ const Quiz = ({ quiz, answers, setAnswers }) => {
 
     // mutation to submit quiz
     const { mutate } = useMutation({
-        mutationFn: ({ answers, quizId }) => submitQuizAnswer({ answers, quizId }),
+        mutationFn: ({ answers, quizId }) => submitQuizAnswer(answers, quizId),
         onSuccess: () => {
             navigate(`/result/${quiz.id}`);
         }
     });
 
     const onConfirm = () => {
+
         if (auth?.user?.role === "admin") {
-            console.log(`admin submitting the quiz`);
             navigate(`/result/${quiz?.id}`, {
                 state: { ...answers },
             });

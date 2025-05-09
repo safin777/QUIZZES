@@ -1,58 +1,100 @@
-import { api } from "../apis/index";
-import { useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
 import axios from "axios";
+import { server_base_url } from "../../static";
+import { useEffect } from "react";
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./useAuth";
 
 const useAxios = () => {
-  const { auth, setAuth } = useAuth();
-  useEffect(() => {
-    //add a request interceptor
+    const { auth, setAuth } = useAuth();
+    const navigate = useNavigate();
+    const api = axios.create({
+        baseURL: server_base_url,
+    });
 
-    const requestIntercept = api.interceptors.request.use(
-      (config) => {
-        const authToken = auth?.authToken;
-        if (authToken) {
-          config.headers.Authorization = `Bearer ${authToken}`;
-        }
-        return config;
-      },
+    useEffect(() => {
+        // Request interceptor
+        // Intercept the request before sent to the server and set Acsses token to the Header.
+        const requestInterceptor = api.interceptors.request.use(
+            (config) => {
+                const accessToken = auth?.accessToken;
 
-      (error) => Promise.reject(error)
-    );
+                if (accessToken) {
+                    config.headers.Authorization = `Bearer ${accessToken}`;
+                }
+                return config;
+            },
+            (error) => Promise.reject(error) // Simplified error rejection.
+        );
 
-    //add a response interceptor
-    const responseIntercept = api.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          // eslint-disable-next-line no-useless-catch
-          try {
-            const refreshToken = auth?.refreshToken;
-            const response = await axios.post(
-              `${import.meta.env.VITE_SERVER_BASE_URL}/auth/refresh-token`,
-              { refreshToken }
-            );
-            const { token } = response.data;
-            setAuth({ ...auth, authToken: token });
+        // Response interceptor
+        // check the response, if response is okay then return the response, but if error while eccesToken expired, call new token by using refresh token and set to the request header and retry the request.
 
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return axios(originalRequest);
-          } catch (error) {
-            throw error;
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-    return () => {
-      api.interceptors.request.eject(requestIntercept);
-      api.interceptors.request.eject(responseIntercept);
-    };
-  }, [auth.authToken]);
+        // if refresh token expires return user to the login page and clear the auth from state and localstorage
 
-  return { api };
+        const responseInterceptor = api.interceptors.response.use(
+            (response) => response,
+            async (error) => {
+                const originalRequest = error.config;
+
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    originalRequest._retry = true;
+
+                    try {
+                        const refreshToken = auth?.refreshToken;
+                        if (!refreshToken) {
+                            // check for missing refreshToken.
+                            throw new Error("Refresh token is missing");
+                        }
+
+                        const response = await axios.post(
+                            `${server_base_url}/auth/refresh-token`,
+                            { refreshToken }
+                        );
+                        console.log(`generated new accessToken`, response);
+
+                        const {
+                            accessToken: newAccessToken,
+                            refreshToken: newRefreshToken,
+                        } = response.data?.data; // Destructured response.
+
+                        const updatedAuth = {
+                            ...auth,
+                            accessToken: newAccessToken,
+                            refreshToken: newRefreshToken,
+                        };
+
+                        setAuth(updatedAuth);
+                        localStorage.setItem(
+                            "auth",
+                            JSON.stringify(updatedAuth)
+                        );
+
+                        //retry the request with new Token
+                        originalRequest.headers = originalRequest.headers || {};
+                        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                        return axios(originalRequest);
+                    } catch (err) {
+                        // if refresh token fail or expired, return user to the login page
+                        console.log(`refresh token fails logouting....`);
+                        setAuth({});
+                        navigate("/login", { replace: true });
+                        localStorage.removeItem("auth");
+
+                        return Promise.reject(err);
+                    }
+                }
+
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            api.interceptors.request.eject(requestInterceptor);
+            api.interceptors.response.eject(responseInterceptor);
+        };
+    }, [auth, navigate, setAuth]);
+
+    return { api };
 };
-
-export { useAxios };
+export  {useAxios};
